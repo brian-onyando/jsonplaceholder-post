@@ -3,10 +3,6 @@ package com.ubunifuconcepts.jsonplaceholderpost.model
 import com.google.gson.annotations.SerializedName
 
 data class Post(
-
-    @field:SerializedName("id")
-    val id: Int,
-
     @field:SerializedName("title")
     val title: String,
 
@@ -14,5 +10,8 @@ data class Post(
     val body: String,
 
     @field:SerializedName("userId")
-    val userId: Int
+    val userId: Int,
+
+    @field:SerializedName("id")
+    val id: Int = 0
 )

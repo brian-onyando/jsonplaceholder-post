@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PostsViewModel : ViewModel() {
-    private val postsLiveData: MutableLiveData<List<Post>> = MutableLiveData()
-    private val errorsLiveData: MutableLiveData<String> = MutableLiveData()
+    val postsLiveData: MutableLiveData<List<Post>> = MutableLiveData()
+    val errorsLiveData: MutableLiveData<String> = MutableLiveData()
     private val networkErrorString = "Error publishing post!"
 
     fun publishPost(post: Post) {
