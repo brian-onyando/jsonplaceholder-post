@@ -1,6 +1,8 @@
 package com.ubunifuconcepts.jsonplaceholderpost.view
 
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +15,7 @@ import com.ubunifuconcepts.jsonplaceholderpost.R
 import com.ubunifuconcepts.jsonplaceholderpost.model.Post
 import com.ubunifuconcepts.jsonplaceholderpost.viewmodel.PostsViewModel
 
+
 class PostsActivity : AppCompatActivity() {
     private val userId = 100
     lateinit var postAdapter: PostAdapter
@@ -23,7 +26,7 @@ class PostsActivity : AppCompatActivity() {
     lateinit var btnPublish: Button
     private val loadingVisual: AlertDialog by lazy {
         AlertDialog.Builder(this)
-            .setMessage(getString(R.string.publishing))
+            .setMessage(getString(R.string.publishing_your_post))
             .setCancelable(false)
             .create()
     }
@@ -64,8 +67,27 @@ class PostsActivity : AppCompatActivity() {
         postsViewModel.postsLiveData
             .observe(this, { posts ->
                 updatePostsList(posts)
+                clearFormData()
                 hideLoadingSpinner()
+                if (posts.isNotEmpty()) {
+                    showPostPublishedSuccessfullyMessage()
+                }
             })
+    }
+
+    private fun showPostPublishedSuccessfullyMessage() {
+        Snackbar.make(
+            postsRecyclerView,
+            "Your post has been published!",
+            Snackbar.LENGTH_SHORT
+        ).also { snackBar ->
+            snackBar.show()
+        }
+    }
+
+    private fun clearFormData() {
+        etTitle.setText("")
+        etBody.setText("")
     }
 
     private fun observeErrors() {
@@ -84,6 +106,7 @@ class PostsActivity : AppCompatActivity() {
 
     private fun registerRefreshButtonListener() {
         btnPublish.setOnClickListener {
+            hideKeyboard()
             if (formDataValidated()) {
                 publishFormData()
             }
@@ -97,7 +120,7 @@ class PostsActivity : AppCompatActivity() {
                 etTitle.error = "Please enter a title"
             }
             getBodyTextFromForm().isBlank() -> {
-                etTitle.error = "Please enter some post content"
+                etBody.error = "Please enter some post content"
             }
             else -> {
                 validFormData = true
@@ -137,5 +160,14 @@ class PostsActivity : AppCompatActivity() {
 
     private fun hideLoadingSpinner() {
         loadingVisual.hide()
+    }
+
+    private fun hideKeyboard() {
+        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        var view: View? = currentFocus
+        if (view == null) {
+            view = View(this)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
